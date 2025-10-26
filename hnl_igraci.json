@@ -1,0 +1,110 @@
+[
+  {
+    "klub": "GNK Dinamo",
+    "godina_osnutka": 1911,
+    "stadion": "Maksimir",
+    "igraci": [
+      {
+        "ime": "Bruno",
+        "prezime": "Petković",
+        "pozicija": "Napadač",
+        "broj_dresa": 9,
+        "nacionalnost": "Hrvatska",
+        "vrijednost_eur": 8000000
+      },
+      {
+        "ime": "Martin",
+        "prezime": "Baturina",
+        "pozicija": "Vezni",
+        "broj_dresa": 10,
+        "nacionalnost": "Hrvatska",
+        "vrijednost_eur": 20000000
+      },
+      {
+        "ime": "Josip",
+        "prezime": "Mišić",
+        "pozicija": "Vezni",
+        "broj_dresa": 27,
+        "nacionalnost": "Hrvatska",
+        "vrijednost_eur": 5000000
+      }
+    ]
+  },
+  {
+    "klub": "HNK Hajduk",
+    "godina_osnutka": 1911,
+    "stadion": "Poljud",
+    "igraci": [
+      {
+        "ime": "Marko",
+        "prezime": "Livaja",
+        "pozicija": "Napadač",
+        "broj_dresa": 10,
+        "nacionalnost": "Hrvatska",
+        "vrijednost_eur": 5500000
+      },
+      {
+        "ime": "Filip",
+        "prezime": "Krovinović",
+        "pozicija": "Vezni",
+        "broj_dresa": 23,
+        "nacionalnost": "Hrvatska",
+        "vrijednost_eur": 2800000
+      },
+      {
+        "ime": "Niko",
+        "prezime": "Sigur",
+        "pozicija": "Obrana",
+        "broj_dresa": 21,
+        "nacionalnost": "SAD/Hrvatska",
+        "vrijednost_eur": 2000000
+      }
+    ]
+  },
+  {
+    "klub": "NK Osijek",
+    "godina_osnutka": 1947,
+    "stadion": "Opus Arena",
+    "igraci": [
+      {
+        "ime": "Domagoj",
+        "prezime": "Bukvić",
+        "pozicija": "Napadač",
+        "broj_dresa": 77,
+        "nacionalnost": "Hrvatska",
+        "vrijednost_eur": 1500000
+      },
+      {
+        "ime": "Ramón",
+        "prezime": "Miérez",
+        "pozicija": "Napadač",
+        "broj_dresa": 13,
+        "nacionalnost": "Argentina",
+        "vrijednost_eur": 4500000
+      }
+    ]
+  },
+  {
+    "klub": "HNK Rijeka",
+    "godina_osnutka": 1946,
+    "stadion": "Rujevica",
+    "igraci": [
+      {
+        "ime": "Toni",
+        "prezime": "Fruk",
+        "pozicija": "Vezni",
+        "broj_dresa": 7,
+        "nacionalnost": "Hrvatska",
+        "vrijednost_eur": 4000000
+      },
+      {
+        "ime": "Niko",
+        "prezime": "Galešić",
+        "pozicija": "Obrana",
+        "broj_dresa": 5,
+        "nacionalnost": "Hrvatska",
+        "vrijednost_eur": 2000000
+      }
+    ]
+  }
+]
