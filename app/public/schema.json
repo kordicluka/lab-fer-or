@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://or.fer.unizg.hr/lab2/hnl_igraci.json",
+  "title": "HNL Igraci",
+  "description": "Skup podataka o igračima Hrvatske nogometne lige.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "title": "Klub",
+    "description": "Objekt koji sadrži sve podatke o jednom klubu i njegovim igračima.",
+    "required": [
+      "klub",
+      "godina_osnutka",
+      "stadion",
+      "igraci"
+    ],
+    "properties": {
+      "klub": {
+        "type": "string",
+        "title": "Naziv kluba"
+      },
+      "godina_osnutka": {
+        "type": "integer",
+        "title": "Godina osnutka"
+      },
+      "stadion": {
+        "type": "string",
+        "title": "Naziv stadiona"
+      },
+      "igraci": {
+        "type": "array",
+        "title": "Igrači",
+        "items": {
+          "type": "object",
+          "title": "Igrač",
+          "required": [
+            "ime",
+            "prezime",
+            "pozicija",
+            "broj_dresa",
+            "nacionalnost",
+            "vrijednost_eur"
+          ],
+          "properties": {
+            "ime": {
+              "type": "string",
+              "title": "Ime igrača"
+            },
+            "prezime": {
+              "type": "string",
+              "title": "Prezime igrača"
+            },
+            "pozicija": {
+              "type": "string",
+              "title": "Pozicija igrača"
+            },
+            "broj_dresa": {
+              "type": "integer",
+              "title": "Broj dresa"
+            },
+            "nacionalnost": {
+              "type": "string",
+              "title": "Nacionalnost"
+            },
+            "vrijednost_eur": {
+              "type": "integer",
+              "title": "Vrijednost u EUR"
+            }
+          }
+        }
+      }
+    }
+  }
+}

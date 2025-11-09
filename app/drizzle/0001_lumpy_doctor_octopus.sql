@@ -1,0 +1,1 @@
+ALTER TABLE "klub" ADD COLUMN "godina_osnutka" integer;

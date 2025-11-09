@@ -1,0 +1,137 @@
+{
+  "id": "57904d2b-8c15-405b-a361-0ddd46749777",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.igrac": {
+      "name": "igrac",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "ime": {
+          "name": "ime",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "prezime": {
+          "name": "prezime",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nacionalnost": {
+          "name": "nacionalnost",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "datum_rodenja": {
+          "name": "datum_rodenja",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pozicija": {
+          "name": "pozicija",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "broj_dresa": {
+          "name": "broj_dresa",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "vrijednost_eur": {
+          "name": "vrijednost_eur",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "datum_potpisa": {
+          "name": "datum_potpisa",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "klub_id": {
+          "name": "klub_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "igrac_klub_id_klub_id_fk": {
+          "name": "igrac_klub_id_klub_id_fk",
+          "tableFrom": "igrac",
+          "tableTo": "klub",
+          "columnsFrom": [
+            "klub_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.klub": {
+      "name": "klub",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "ime": {
+          "name": "ime",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "stadion_domacin": {
+          "name": "stadion_domacin",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
