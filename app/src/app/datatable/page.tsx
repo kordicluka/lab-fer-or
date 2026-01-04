@@ -11,7 +11,7 @@ export default function DataTablePage() {
     const fetchPlayers = async () => {
       const response = await fetch(`/api/players?query=${query}&filter=${filter}`);
       const data = await response.json();
-      setPlayers(data);
+      setPlayers(data.response || []);
     };
     fetchPlayers();
   }, [query, filter]);

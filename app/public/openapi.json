@@ -1,0 +1,796 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "HNL Players API",
+    "description": "RESTful API for managing Croatian Football League (HNL) players and clubs data. Provides CRUD operations for players and read-only access to clubs information.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "FER - Otvoreno računarstvo",
+      "email": "student@fer.hr"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Development server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "players",
+      "description": "Operations related to HNL players"
+    },
+    {
+      "name": "clubs",
+      "description": "Operations related to HNL clubs"
+    }
+  ],
+  "paths": {
+    "/api/players": {
+      "get": {
+        "tags": ["players"],
+        "summary": "Get all players",
+        "description": "Retrieves a list of all HNL players with optional search and filtering capabilities",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "description": "Search query string to filter players",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "Field to filter by (all, ime, prezime, nacionalnost, pozicija, klub)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["all", "ime", "prezime", "nacionalnost", "pozicija", "klub"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Players retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlayersResponse"
+                },
+                "example": {
+                  "status": "OK",
+                  "message": "Players retrieved successfully",
+                  "response": [
+                    {
+                      "id": 1,
+                      "ime": "Marko",
+                      "prezime": "Marić",
+                      "nacionalnost": "Hrvatska",
+                      "pozicija": "Golman",
+                      "broj_dresa": 1,
+                      "vrijednost_eur": 500000,
+                      "klub": "Dinamo Zagreb"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "post": {
+        "tags": ["players"],
+        "summary": "Create a new player",
+        "description": "Creates a new HNL player record",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlayerInput"
+              },
+              "example": {
+                "ime": "Ivan",
+                "prezime": "Ivić",
+                "nacionalnost": "Hrvatska",
+                "datum_rodenja": "1995-05-15",
+                "pozicija": "Napadač",
+                "broj_dresa": 9,
+                "vrijednost_eur": 750000,
+                "datum_potpisa": "2024-01-15",
+                "klub_id": 1
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Player created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlayerResponse"
+                },
+                "example": {
+                  "status": "OK",
+                  "message": "Player created successfully",
+                  "response": {
+                    "id": 123,
+                    "ime": "Ivan",
+                    "prezime": "Ivić",
+                    "nacionalnost": "Hrvatska",
+                    "datum_rodenja": "1995-05-15",
+                    "pozicija": "Napadač",
+                    "broj_dresa": 9,
+                    "vrijednost_eur": 750000,
+                    "datum_potpisa": "2024-01-15",
+                    "klub_id": 1
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/players/{id}": {
+      "get": {
+        "tags": ["players"],
+        "summary": "Get player by ID",
+        "description": "Retrieves a single player by their ID with club information",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Player ID",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Player retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlayerResponse"
+                },
+                "example": {
+                  "status": "OK",
+                  "message": "Player retrieved successfully",
+                  "response": {
+                    "id": 1,
+                    "ime": "Marko",
+                    "prezime": "Marić",
+                    "nacionalnost": "Hrvatska",
+                    "datum_rodenja": "1992-03-10",
+                    "pozicija": "Golman",
+                    "broj_dresa": 1,
+                    "vrijednost_eur": 500000,
+                    "datum_potpisa": "2023-07-01",
+                    "klub_id": 1,
+                    "klub": "Dinamo Zagreb"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "put": {
+        "tags": ["players"],
+        "summary": "Update player",
+        "description": "Updates an existing player's information",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Player ID",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlayerInput"
+              },
+              "example": {
+                "ime": "Marko",
+                "prezime": "Marić",
+                "nacionalnost": "Hrvatska",
+                "datum_rodenja": "1992-03-10",
+                "pozicija": "Golman",
+                "broj_dresa": 1,
+                "vrijednost_eur": 600000,
+                "datum_potpisa": "2023-07-01",
+                "klub_id": 1
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Player updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlayerResponse"
+                },
+                "example": {
+                  "status": "OK",
+                  "message": "Player updated successfully",
+                  "response": {
+                    "id": 1,
+                    "ime": "Marko",
+                    "prezime": "Marić",
+                    "nacionalnost": "Hrvatska",
+                    "datum_rodenja": "1992-03-10",
+                    "pozicija": "Golman",
+                    "broj_dresa": 1,
+                    "vrijednost_eur": 600000,
+                    "datum_potpisa": "2023-07-01",
+                    "klub_id": 1
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["players"],
+        "summary": "Delete player",
+        "description": "Deletes a player from the database",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Player ID",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Player deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteResponse"
+                },
+                "example": {
+                  "status": "OK",
+                  "message": "Player deleted successfully",
+                  "response": null
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/clubs": {
+      "get": {
+        "tags": ["clubs"],
+        "summary": "Get all clubs",
+        "description": "Retrieves a list of all HNL clubs ordered by name",
+        "responses": {
+          "200": {
+            "description": "Clubs retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClubsResponse"
+                },
+                "example": {
+                  "status": "OK",
+                  "message": "Clubs retrieved successfully",
+                  "response": [
+                    {
+                      "id": 1,
+                      "ime": "Dinamo Zagreb",
+                      "stadion_domacin": "Maksimir",
+                      "godina_osnutka": 1945
+                    },
+                    {
+                      "id": 2,
+                      "ime": "Hajduk Split",
+                      "stadion_domacin": "Poljud",
+                      "godina_osnutka": 1911
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/clubs/{id}": {
+      "get": {
+        "tags": ["clubs"],
+        "summary": "Get club by ID",
+        "description": "Retrieves a single club by its ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Club ID",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Club retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClubResponse"
+                },
+                "example": {
+                  "status": "OK",
+                  "message": "Club retrieved successfully",
+                  "response": {
+                    "id": 1,
+                    "ime": "Dinamo Zagreb",
+                    "stadion_domacin": "Maksimir",
+                    "godina_osnutka": 1945
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/players/club/{club_id}": {
+      "get": {
+        "tags": ["players"],
+        "summary": "Get players by club",
+        "description": "Retrieves all players belonging to a specific club",
+        "parameters": [
+          {
+            "name": "club_id",
+            "in": "path",
+            "description": "Club ID",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Players retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlayersResponse"
+                },
+                "example": {
+                  "status": "OK",
+                  "message": "Players retrieved successfully",
+                  "response": [
+                    {
+                      "id": 1,
+                      "ime": "Marko",
+                      "prezime": "Marić",
+                      "nacionalnost": "Hrvatska",
+                      "datum_rodenja": "1992-03-10",
+                      "pozicija": "Golman",
+                      "broj_dresa": 1,
+                      "vrijednost_eur": 500000,
+                      "datum_potpisa": "2023-07-01",
+                      "klub_id": 1,
+                      "klub": "Dinamo Zagreb"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/openapi.json": {
+      "get": {
+        "tags": ["documentation"],
+        "summary": "Get OpenAPI specification",
+        "description": "Returns the complete OpenAPI 3.0.3 specification for this API",
+        "responses": {
+          "200": {
+            "description": "OpenAPI specification retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Player": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique player identifier"
+          },
+          "ime": {
+            "type": "string",
+            "description": "Player first name"
+          },
+          "prezime": {
+            "type": "string",
+            "description": "Player last name"
+          },
+          "nacionalnost": {
+            "type": "string",
+            "nullable": true,
+            "description": "Player nationality"
+          },
+          "datum_rodenja": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "Player birth date (ISO 8601 format)"
+          },
+          "pozicija": {
+            "type": "string",
+            "nullable": true,
+            "description": "Player position"
+          },
+          "broj_dresa": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Jersey number"
+          },
+          "vrijednost_eur": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Player market value in EUR"
+          },
+          "datum_potpisa": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "Contract signing date (ISO 8601 format)"
+          },
+          "klub_id": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Club ID (foreign key)"
+          },
+          "klub": {
+            "type": "string",
+            "nullable": true,
+            "description": "Club name (joined data)"
+          }
+        },
+        "required": ["id", "ime", "prezime"]
+      },
+      "PlayerInput": {
+        "type": "object",
+        "properties": {
+          "ime": {
+            "type": "string",
+            "description": "Player first name"
+          },
+          "prezime": {
+            "type": "string",
+            "description": "Player last name"
+          },
+          "nacionalnost": {
+            "type": "string",
+            "nullable": true,
+            "description": "Player nationality"
+          },
+          "datum_rodenja": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "Player birth date (ISO 8601 format)"
+          },
+          "pozicija": {
+            "type": "string",
+            "nullable": true,
+            "description": "Player position"
+          },
+          "broj_dresa": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 99,
+            "description": "Jersey number (0-99)"
+          },
+          "vrijednost_eur": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0,
+            "description": "Player market value in EUR"
+          },
+          "datum_potpisa": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "Contract signing date (ISO 8601 format)"
+          },
+          "klub_id": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 1,
+            "description": "Club ID (must reference existing club)"
+          }
+        },
+        "required": ["ime", "prezime"]
+      },
+      "Club": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique club identifier"
+          },
+          "ime": {
+            "type": "string",
+            "description": "Club name"
+          },
+          "stadion_domacin": {
+            "type": "string",
+            "nullable": true,
+            "description": "Home stadium name"
+          },
+          "godina_osnutka": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Year club was founded"
+          }
+        },
+        "required": ["id", "ime"]
+      },
+      "ApiResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["OK", "Error"],
+            "description": "Response status"
+          },
+          "message": {
+            "type": "string",
+            "description": "Response message"
+          },
+          "response": {
+            "description": "Response data (null on error)",
+            "nullable": true
+          }
+        },
+        "required": ["status", "message", "response"]
+      },
+      "PlayerResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ApiResponse"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "response": {
+                "$ref": "#/components/schemas/Player"
+              }
+            }
+          }
+        ]
+      },
+      "PlayersResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ApiResponse"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "response": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Player"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ClubResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ApiResponse"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "response": {
+                "$ref": "#/components/schemas/Club"
+              }
+            }
+          }
+        ]
+      },
+      "ClubsResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ApiResponse"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "response": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Club"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "DeleteResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ApiResponse"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "response": {
+                "type": "null"
+              }
+            }
+          }
+        ]
+      },
+      "ErrorResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ApiResponse"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": ["Error"]
+              },
+              "response": {
+                "type": "null"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Bad request - validation failed",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "status": "Error",
+              "message": "Validation failed: ime is required and must be a non-empty string",
+              "response": null
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Resource not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "status": "Error",
+              "message": "Player not found",
+              "response": null
+            }
+          }
+        }
+      },
+      "InternalServerError": {
+        "description": "Internal server error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "status": "Error",
+              "message": "Internal server error",
+              "response": null
+            }
+          }
+        }
+      }
+    }
+  }
+}
