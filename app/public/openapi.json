@@ -23,6 +23,10 @@
     {
       "name": "clubs",
       "description": "Operations related to HNL clubs"
+    },
+    {
+      "name": "data",
+      "description": "Data management operations (requires authentication)"
     }
   ],
   "paths": {
@@ -149,7 +153,7 @@
       "get": {
         "tags": ["players"],
         "summary": "Get player by ID",
-        "description": "Retrieves a single player by their ID with club information",
+        "description": "Retrieves a single player by their ID with club information. Response includes JSON-LD semantic context mapping to Schema.org Person type.",
         "parameters": [
           {
             "name": "id",
@@ -163,16 +167,33 @@
         ],
         "responses": {
           "200": {
-            "description": "Player retrieved successfully",
+            "description": "Player retrieved successfully with JSON-LD context",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PlayerResponse"
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "response": { "$ref": "#/components/schemas/PlayerWithJsonLd" }
+                      }
+                    }
+                  ]
                 },
                 "example": {
                   "status": "OK",
                   "message": "Player retrieved successfully",
                   "response": {
+                    "@context": {
+                      "@vocab": "https://schema.org/",
+                      "ime": "givenName",
+                      "prezime": "familyName",
+                      "nacionalnost": "nationality",
+                      "datum_rodenja": "birthDate",
+                      "pozicija": "jobTitle"
+                    },
+                    "@type": "Person",
                     "id": 1,
                     "ime": "Marko",
                     "prezime": "Marić",
@@ -361,7 +382,7 @@
       "get": {
         "tags": ["clubs"],
         "summary": "Get club by ID",
-        "description": "Retrieves a single club by its ID",
+        "description": "Retrieves a single club by its ID. Response includes JSON-LD semantic context mapping to Schema.org SportsTeam type.",
         "parameters": [
           {
             "name": "id",
@@ -375,16 +396,30 @@
         ],
         "responses": {
           "200": {
-            "description": "Club retrieved successfully",
+            "description": "Club retrieved successfully with JSON-LD context",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ClubResponse"
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "response": { "$ref": "#/components/schemas/ClubWithJsonLd" }
+                      }
+                    }
+                  ]
                 },
                 "example": {
                   "status": "OK",
                   "message": "Club retrieved successfully",
                   "response": {
+                    "@context": {
+                      "@vocab": "https://schema.org/",
+                      "ime": "name",
+                      "stadion_domacin": "location"
+                    },
+                    "@type": "SportsTeam",
                     "id": 1,
                     "ime": "Dinamo Zagreb",
                     "stadion_domacin": "Maksimir",
@@ -479,6 +514,46 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/refresh": {
+      "post": {
+        "tags": ["data"],
+        "summary": "Refresh data files",
+        "description": "Regenerates the hnl_igraci.json and hnl_igraci.csv files from the database. Requires authentication via Auth0.",
+        "security": [
+          {
+            "auth0": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Files refreshed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RefreshResponse"
+                },
+                "example": {
+                  "status": "OK",
+                  "message": "Preslike uspješno osvježene",
+                  "response": {
+                    "jsonFile": "/hnl_igraci.json",
+                    "csvFile": "/hnl_igraci.csv",
+                    "clubsCount": 10,
+                    "playersCount": 200
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
           }
         }
       }
@@ -743,6 +818,113 @@
             }
           }
         ]
+      },
+      "RefreshResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ApiResponse"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "response": {
+                "type": "object",
+                "properties": {
+                  "jsonFile": {
+                    "type": "string",
+                    "description": "Path to generated JSON file"
+                  },
+                  "csvFile": {
+                    "type": "string",
+                    "description": "Path to generated CSV file"
+                  },
+                  "clubsCount": {
+                    "type": "integer",
+                    "description": "Number of clubs exported"
+                  },
+                  "playersCount": {
+                    "type": "integer",
+                    "description": "Number of players exported"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "JsonLdContext": {
+        "type": "object",
+        "description": "JSON-LD context for semantic data representation",
+        "properties": {
+          "@vocab": {
+            "type": "string",
+            "description": "Base vocabulary URL (schema.org)"
+          }
+        }
+      },
+      "PlayerWithJsonLd": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Player"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "@context": {
+                "type": "object",
+                "description": "JSON-LD context mapping attributes to Schema.org Person type + custom HNL vocabulary",
+                "properties": {
+                  "@vocab": { "type": "string", "description": "https://schema.org/" },
+                  "hnl": { "type": "string", "description": "Custom namespace: https://hnl.hr/schema#" },
+                  "id": { "type": "string", "description": "Maps to identifier" },
+                  "ime": { "type": "string", "description": "Maps to givenName" },
+                  "prezime": { "type": "string", "description": "Maps to familyName" },
+                  "nacionalnost": { "type": "string", "description": "Maps to nationality" },
+                  "datum_rodenja": { "type": "string", "description": "Maps to birthDate" },
+                  "pozicija": { "type": "string", "description": "Maps to jobTitle" },
+                  "klub": { "type": "string", "description": "Maps to memberOf" },
+                  "broj_dresa": { "type": "string", "description": "Maps to hnl:jerseyNumber" },
+                  "vrijednost_eur": { "type": "string", "description": "Maps to hnl:marketValueEUR" },
+                  "datum_potpisa": { "type": "string", "description": "Maps to hnl:contractSignedDate" },
+                  "klub_id": { "type": "string", "description": "Maps to hnl:clubId" }
+                }
+              },
+              "@type": {
+                "type": "string",
+                "enum": ["Person"],
+                "description": "Schema.org type"
+              }
+            }
+          }
+        ]
+      },
+      "ClubWithJsonLd": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Club"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "@context": {
+                "type": "object",
+                "description": "JSON-LD context mapping attributes to Schema.org SportsTeam type",
+                "properties": {
+                  "@vocab": { "type": "string", "description": "https://schema.org/" },
+                  "id": { "type": "string", "description": "Maps to identifier" },
+                  "ime": { "type": "string", "description": "Maps to name" },
+                  "stadion_domacin": { "type": "string", "description": "Maps to location" },
+                  "godina_osnutka": { "type": "string", "description": "Maps to foundingDate" }
+                }
+              },
+              "@type": {
+                "type": "string",
+                "enum": ["SportsTeam"],
+                "description": "Schema.org type"
+              }
+            }
+          }
+        ]
       }
     },
     "responses": {
@@ -788,6 +970,34 @@
               "message": "Internal server error",
               "response": null
             }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Authentication required",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "status": "Error",
+              "message": "Unauthorized",
+              "response": null
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "auth0": {
+        "type": "oauth2",
+        "description": "Auth0 authentication. Login via /auth/login, logout via /auth/logout",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://your-tenant.auth0.com/authorize",
+            "tokenUrl": "https://your-tenant.auth0.com/oauth/token",
+            "scopes": {}
           }
         }
       }

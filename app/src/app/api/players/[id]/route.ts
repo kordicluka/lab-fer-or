@@ -3,6 +3,7 @@ import { igrac, klub } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { successResponse, errorResponse } from '@/lib/apiResponse';
 import { validatePlayerInput } from '@/lib/validation';
+import { addPlayerJsonLd } from '@/lib/jsonld';
 
 export async function GET(
   request: Request,
@@ -38,7 +39,8 @@ export async function GET(
       return errorResponse('Player not found', 404);
     }
 
-    return successResponse(result[0], 'Player retrieved successfully');
+    const playerWithJsonLd = addPlayerJsonLd(result[0]);
+    return successResponse(playerWithJsonLd, 'Player retrieved successfully');
   } catch (error) {
     console.error('Error fetching player:', error);
     return errorResponse('Internal server error', 500);

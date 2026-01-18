@@ -2,6 +2,7 @@ import { db } from '@/db';
 import { klub } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { successResponse, errorResponse } from '@/lib/apiResponse';
+import { addClubJsonLd } from '@/lib/jsonld';
 
 export async function GET(
   request: Request,
@@ -21,7 +22,8 @@ export async function GET(
       return errorResponse('Club not found', 404);
     }
 
-    return successResponse(result[0], 'Club retrieved successfully');
+    const clubWithJsonLd = addClubJsonLd(result[0]);
+    return successResponse(clubWithJsonLd, 'Club retrieved successfully');
   } catch (error) {
     console.error('Error fetching club:', error);
     return errorResponse('Internal server error', 500);

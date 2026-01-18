@@ -1,0 +1,209 @@
+###
+# REST API Test Client - HNL Players API
+# Za korištenje u VS Code s REST Client ekstenzijom
+# https://marketplace.visualstudio.com/items?itemName=humao.rest-client
+###
+
+@baseUrl = http://localhost:3001
+@contentType = application/json
+
+###############################################################################
+# 1. GET /api/players - Dohvati sve igrače
+###############################################################################
+
+GET {{baseUrl}}/api/players
+Content-Type: {{contentType}}
+
+###############################################################################
+# 2. GET /api/players/[id] - Dohvati igrača po ID-u
+###############################################################################
+
+GET {{baseUrl}}/api/players/1
+Content-Type: {{contentType}}
+
+###
+
+# Test 404 - Nepostojeći igrač
+GET {{baseUrl}}/api/players/99999
+Content-Type: {{contentType}}
+
+###############################################################################
+# 3. POST /api/players - Kreiraj novog igrača
+###############################################################################
+
+POST {{baseUrl}}/api/players
+Content-Type: {{contentType}}
+
+{
+  "ime": "Test",
+  "prezime": "Igrač",
+  "nacionalnost": "Hrvatska",
+  "datum_rodenja": "1995-01-15",
+  "pozicija": "Vezni",
+  "broj_dresa": 99,
+  "vrijednost_eur": 1500000,
+  "datum_potpisa": "2024-01-01",
+  "klub_id": 1
+}
+
+###
+
+# Test validacije - nedostaje ime (required)
+POST {{baseUrl}}/api/players
+Content-Type: {{contentType}}
+
+{
+  "prezime": "Samo Prezime"
+}
+
+###
+
+# Test validacije - nevažeći broj dresa
+POST {{baseUrl}}/api/players
+Content-Type: {{contentType}}
+
+{
+  "ime": "Test",
+  "prezime": "Igrač",
+  "broj_dresa": 150
+}
+
+###############################################################################
+# 4. PUT /api/players/[id] - Ažuriraj igrača
+# NAPOMENA: Zamijeni ID sa stvarnim ID-em kreiranog igrača
+###############################################################################
+
+PUT {{baseUrl}}/api/players/11
+Content-Type: {{contentType}}
+
+{
+  "ime": "Updated",
+  "prezime": "Testni",
+  "nacionalnost": "Hrvatska",
+  "datum_rodenja": "1995-01-15",
+  "pozicija": "Napadač",
+  "broj_dresa": 77,
+  "vrijednost_eur": 2000000,
+  "datum_potpisa": "2024-01-01",
+  "klub_id": 2
+}
+
+###
+
+# Test 404 - Ažuriranje nepostojećeg igrača
+PUT {{baseUrl}}/api/players/99999
+Content-Type: {{contentType}}
+
+{
+  "ime": "Test",
+  "prezime": "Nepostoji",
+  "nacionalnost": "Hrvatska",
+  "pozicija": "Vezni",
+  "broj_dresa": 50,
+  "vrijednost_eur": 1000000,
+  "klub_id": 1
+}
+
+###############################################################################
+# 5. DELETE /api/players/[id] - Obriši igrača
+# NAPOMENA: Zamijeni ID sa stvarnim ID-em igrača kojeg želiš obrisati
+###############################################################################
+
+DELETE {{baseUrl}}/api/players/11
+Content-Type: {{contentType}}
+
+###
+
+# Test 404 - Brisanje nepostojećeg igrača
+DELETE {{baseUrl}}/api/players/99999
+Content-Type: {{contentType}}
+
+###############################################################################
+# 6. GET /api/clubs - Dohvati sve klubove (read-only)
+###############################################################################
+
+GET {{baseUrl}}/api/clubs
+Content-Type: {{contentType}}
+
+###############################################################################
+# 7. GET /api/clubs/[id] - Dohvati klub po ID-u
+###############################################################################
+
+GET {{baseUrl}}/api/clubs/1
+Content-Type: {{contentType}}
+
+###
+
+GET {{baseUrl}}/api/clubs/2
+Content-Type: {{contentType}}
+
+###
+
+GET {{baseUrl}}/api/clubs/3
+Content-Type: {{contentType}}
+
+###
+
+GET {{baseUrl}}/api/clubs/4
+Content-Type: {{contentType}}
+
+###
+
+# Test 404 - Nepostojeći klub
+GET {{baseUrl}}/api/clubs/999
+Content-Type: {{contentType}}
+
+###############################################################################
+# 8. GET /api/players/club/[club_id] - Dohvati igrače po klubu
+###############################################################################
+
+# Dinamo Zagreb
+GET {{baseUrl}}/api/players/club/1
+Content-Type: {{contentType}}
+
+###
+
+# Hajduk Split
+GET {{baseUrl}}/api/players/club/2
+Content-Type: {{contentType}}
+
+###
+
+# Rijeka
+GET {{baseUrl}}/api/players/club/3
+Content-Type: {{contentType}}
+
+###
+
+# Osijek
+GET {{baseUrl}}/api/players/club/4
+Content-Type: {{contentType}}
+
+###
+
+# Test 404 - Nepostojeći klub
+GET {{baseUrl}}/api/players/club/999
+Content-Type: {{contentType}}
+
+###############################################################################
+# 9. GET /api/openapi.json - OpenAPI specifikacija
+###############################################################################
+
+GET {{baseUrl}}/api/openapi.json
+Content-Type: {{contentType}}
+
+###############################################################################
+# Dodatni testovi - /api/players s query parametrima
+###############################################################################
+
+# Pretraga po poziciji
+GET {{baseUrl}}/api/players?filter=pozicija&query=Napadač
+Content-Type: {{contentType}}
+
+###
+
+# Pretraga po klubu
+GET {{baseUrl}}/api/players?filter=klub&query=Dinamo
+Content-Type: {{contentType}}
+
+###
